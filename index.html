@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>年末調整 記入ガイド</title>
+<meta name="description" content="令和8年分の年末調整で、扶養控除等申告書・基礎控除申告書・配偶者控除等申告書・特定親族特別控除申告書のどの欄に何を書くかを、質問に答えるだけで確認できるガイドです。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="printbar" class="printbar" hidden>
+  <div class="wrap printbar-inner">
+    <span>印刷用の画面です。入力欄は印刷されません。</span>
+    <span class="printbar-actions">
+      <button type="button" id="do-print" class="btn">印刷する</button>
+      <button type="button" id="exit-print" class="btn ghost">入力に戻る</button>
+    </span>
+  </div>
+</div>
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">令和8年分 · 給与所得者向け</p>
+    <h1>年末調整 記入ガイド</h1>
+    <p class="lead">家族と収入について答えると、会社から配られた申告書のどの欄に何を書けばよいかが右側に出ます。</p>
+    <p class="privacy">入力した内容はこの画面の中だけで計算します。どこにも送信せず、保存もしません。</p>
+  </div>
+</header>
+
+<main class="wrap layout">
+  <form id="input" class="inputs" autocomplete="off" novalidate>
+    <div class="toolbar">
+      <button type="button" id="load-sample" class="btn ghost">記入例を表示</button>
+      <button type="button" id="clear-all" class="btn ghost">すべて消す</button>
+      <button type="button" class="btn ghost open-print">印刷用の画面</button>
+      <a class="btn ghost jump" href="#result">書き方を見る ↓</a>
+    </div>
+    <p id="sample-banner" class="banner">いま入っているのは<strong>記入例</strong>の数字です。「すべて消す」を押してから、ご自身の内容を入れてください。</p>
+
+    <fieldset class="block">
+      <legend>あなた</legend>
+      <label class="field" for="self-salary">
+        <span class="q">今年1年間の給与の収入金額（見込み）</span>
+        <span class="money"><input id="self-salary" type="number" inputmode="numeric" min="0" step="1" data-k="self.salary"><span class="unit">円</span></span>
+        <output class="man" data-for="self-salary"></output>
+        <span class="hint">12月の給与・賞与も含めた額面の合計です。2か所以上から給与をもらっている場合は全部を足します。</span>
+      </label>
+      <label class="field" for="self-other">
+        <span class="q">給与以外の所得金額</span>
+        <span class="money"><input id="self-other" type="number" inputmode="numeric" min="0" step="1" data-k="self.other"><span class="unit">円</span></span>
+        <output class="man" data-for="self-other"></output>
+        <span class="hint">副業や年金などの「所得」（収入から経費などを引いた額）です。なければ空欄のままで大丈夫です。</span>
+      </label>
+      <div class="row3">
+        <label class="field" for="self-shogai">
+          <span class="q">障害者に当てはまりますか</span>
+          <select id="self-shogai" data-k="self.shogai">
+            <option value="none">当てはまらない</option>
+            <option value="normal">障害者</option>
+            <option value="special">特別障害者</option>
+          </select>
+        </label>
+        <label class="field" for="self-status">
+          <span class="q">寡婦・ひとり親</span>
+          <select id="self-status" data-k="self.status">
+            <option value="none">当てはまらない</option>
+            <option value="kafu">寡婦</option>
+            <option value="hitorioya">ひとり親</option>
+          </select>
+        </label>
+        <label class="check" for="self-student">
+          <input id="self-student" type="checkbox" data-k="self.student">
+          <span>学生として働いている（勤労学生）</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset class="block">
+      <legend>配偶者</legend>
+      <label class="check" for="sp-has">
+        <input id="sp-has" type="checkbox" data-k="spouse.has">
+        <span>配偶者がいる（婚姻届を出している人）</span>
+      </label>
+      <div id="spouse-fields" class="sub">
+        <label class="field" for="sp-birth">
+          <span class="q">配偶者の生年月日</span>
+          <input id="sp-birth" type="date" data-k="spouse.birth" min="1900-01-01" max="2026-12-31">
+        </label>
+        <label class="field" for="sp-salary">
+          <span class="q">配偶者の今年の給与収入（見込み）</span>
+          <span class="money"><input id="sp-salary" type="number" inputmode="numeric" min="0" step="1" data-k="spouse.salary"><span class="unit">円</span></span>
+          <output class="man" data-for="sp-salary"></output>
+        </label>
+        <label class="field" for="sp-other">
+          <span class="q">配偶者の給与以外の所得金額</span>
+          <span class="money"><input id="sp-other" type="number" inputmode="numeric" min="0" step="1" data-k="spouse.other"><span class="unit">円</span></span>
+          <output class="man" data-for="sp-other"></output>
+        </label>
+        <div class="row3">
+          <label class="field" for="sp-shogai">
+            <span class="q">配偶者の障害</span>
+            <select id="sp-shogai" data-k="spouse.shogai">
+              <option value="none">当てはまらない</option>
+              <option value="normal">障害者</option>
+              <option value="special">特別障害者</option>
+            </select>
+          </label>
+          <label class="check" for="sp-together">
+            <input id="sp-together" type="checkbox" data-k="spouse.together">
+            <span>一緒に住んでいる</span>
+          </label>
+          <label class="check" for="sp-senju">
+            <input id="sp-senju" type="checkbox" data-k="spouse.senju">
+            <span>あなたの事業の専従者として給与をもらっている</span>
+          </label>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="block">
+      <legend>生計を一にする家族（配偶者以外）</legend>
+      <p class="hint">子・父母・祖父母など、あなたの収入で一緒に生活している人です。仕送りしている別居の家族も含みます。</p>
+      <div id="people"></div>
+      <button type="button" id="add-person" class="btn">＋ 家族を追加</button>
+    </fieldset>
+
+    <fieldset class="block">
+      <legend>今年あなたが払った保険料</legend>
+      <p class="hint">10月ごろに届く控除証明書の「本年中の払込保険料（申告額）」を、区分ごとに合計して入れます。証明書に「新」「旧」と書かれているので、その区別に従ってください。</p>
+      <p class="minihead">生命保険料</p>
+      <div class="row3">
+        <label class="field" for="h-seimei-new"><span class="q">一般の生命保険料（新）</span>
+          <span class="money"><input id="h-seimei-new" type="number" inputmode="numeric" min="0" step="1" data-k="hoken.seimeiNew"><span class="unit">円</span></span>
+          <output class="man" data-for="h-seimei-new"></output></label>
+        <label class="field" for="h-seimei-old"><span class="q">一般の生命保険料（旧）</span>
+          <span class="money"><input id="h-seimei-old" type="number" inputmode="numeric" min="0" step="1" data-k="hoken.seimeiOld"><span class="unit">円</span></span>
+          <output class="man" data-for="h-seimei-old"></output></label>
+        <label class="field" for="h-kaigo"><span class="q">介護医療保険料</span>
+          <span class="money"><input id="h-kaigo" type="number" inputmode="numeric" min="0" step="1" data-k="hoken.kaigo"><span class="unit">円</span></span>
+          <output class="man" data-for="h-kaigo"></output></label>
+        <label class="field" for="h-nenkin-new"><span class="q">個人年金保険料（新）</span>
+          <span class="money"><input id="h-nenkin-new" type="number" inputmode="numeric" min="0" step="1" data-k="hoken.nenkinNew"><span class="unit">円</span></span>
+          <output class="man" data-for="h-nenkin-new"></output></label>
+        <label class="field" for="h-nenkin-old"><span class="q">個人年金保険料（旧）</span>
+          <span class="money"><input id="h-nenkin-old" type="number" inputmode="numeric" min="0" step="1" data-k="hoken.nenkinOld"><span class="unit">円</span></span>
+          <output class="man" data-for="h-nenkin-old"></output></label>
+      </div>
+      <p class="minihead">地震保険料</p>
+      <div class="row3">
+        <label class="field" for="h-jishin"><span class="q">地震保険料</span>
+          <span class="money"><input id="h-jishin" type="number" inputmode="numeric" min="0" step="1" data-k="hoken.jishin"><span class="unit">円</span></span>
+          <output class="man" data-for="h-jishin"></output></label>
+        <label class="field" for="h-choki"><span class="q">旧長期損害保険料</span>
+          <span class="money"><input id="h-choki" type="number" inputmode="numeric" min="0" step="1" data-k="hoken.kyuChoki"><span class="unit">円</span></span>
+          <output class="man" data-for="h-choki"></output>
+          <span class="hint">平成18年までに契約した長期の火災保険などです。</span></label>
+      </div>
+      <p class="minihead">自分で払った社会保険料・掛金</p>
+      <div class="row3">
+        <label class="field" for="h-shakai"><span class="q">社会保険料</span>
+          <span class="money"><input id="h-shakai" type="number" inputmode="numeric" min="0" step="1" data-k="hoken.shakai"><span class="unit">円</span></span>
+          <output class="man" data-for="h-shakai"></output>
+          <span class="hint">家族の国民年金・国民健康保険などを自分で払った分。給与から引かれている分は入れません。</span></label>
+        <label class="field" for="h-shokibo"><span class="q">小規模企業共済等掛金</span>
+          <span class="money"><input id="h-shokibo" type="number" inputmode="numeric" min="0" step="1" data-k="hoken.shokibo"><span class="unit">円</span></span>
+          <output class="man" data-for="h-shokibo"></output>
+          <span class="hint">iDeCoを自分の口座から払っている分など。給与天引きの分は入れません。</span></label>
+      </div>
+    </fieldset>
+
+    <fieldset class="block">
+      <legend>住宅ローン控除（2年目以降）</legend>
+      <label class="check" for="j-has">
+        <input id="j-has" type="checkbox" data-k="jutaku.has">
+        <span>税務署から届いた「住宅借入金等特別控除申告書」がある</span>
+      </label>
+      <p class="hint">1年目は確定申告が必要です。2年目以降は年末調整で受けられます。</p>
+      <div id="jutaku-fields" class="sub">
+        <label class="field" for="j-period"><span class="q">住み始めた時期</span>
+          <select id="j-period" data-k="jutaku.period"></select></label>
+        <label class="field" for="j-type"><span class="q">住宅の種類</span>
+          <select id="j-type" data-k="jutaku.type"></select>
+          <span class="hint">控除証明書や1年目の確定申告の計算明細書で確認できます。申告書に印字された控除限度額と合わないときは「申告書の印字に合わせて入力」を選んでください。</span></label>
+        <div id="jutaku-custom" class="row3">
+          <label class="field" for="j-limit"><span class="q">借入限度額</span>
+            <span class="money"><input id="j-limit" type="number" inputmode="numeric" min="0" step="1" data-k="jutaku.customLimit"><span class="unit">円</span></span>
+            <output class="man" data-for="j-limit"></output></label>
+          <label class="field" for="j-rate"><span class="q">控除率</span>
+            <select id="j-rate" data-k="jutaku.customRate">
+              <option value="7">0.7%</option><option value="10">1.0%</option><option value="9">0.9%</option><option value="12">1.2%</option>
+            </select></label>
+          <label class="field" for="j-cap"><span class="q">各年の控除限度額</span>
+            <span class="money"><input id="j-cap" type="number" inputmode="numeric" min="0" step="1" data-k="jutaku.customCap"><span class="unit">円</span></span>
+            <output class="man" data-for="j-cap"></output></label>
+        </div>
+        <label class="field" for="j-zandaka"><span class="q">住宅ローンの年末残高</span>
+          <span class="money"><input id="j-zandaka" type="number" inputmode="numeric" min="0" step="1" data-k="jutaku.zandaka"><span class="unit">円</span></span>
+          <output class="man" data-for="j-zandaka"></output>
+          <span class="hint">金融機関の「年末残高等証明書」、または控除証明書の「年末残高」欄の金額です。借入れが複数あるときは合計します。</span></label>
+        <div class="row3">
+          <label class="field" for="j-futan"><span class="q">連帯債務の負担割合</span>
+            <span class="money"><input id="j-futan" type="number" inputmode="numeric" min="0" max="100" step="0.1" data-k="jutaku.futan"><span class="unit">%</span></span>
+            <span class="hint">連帯債務でなければ100%。</span></label>
+          <label class="field" for="j-kyoju"><span class="q">居住用の割合</span>
+            <span class="money"><input id="j-kyoju" type="number" inputmode="numeric" min="0" max="100" step="0.1" data-k="jutaku.kyoju"><span class="unit">%</span></span>
+            <span class="hint">店舗併用などでなければ100%。</span></label>
+        </div>
+        <label class="field" for="j-taika"><span class="q">家屋・土地の取得対価の額（あなたの持分）</span>
+          <span class="money"><input id="j-taika" type="number" inputmode="numeric" min="0" step="1" data-k="jutaku.taika"><span class="unit">円</span></span>
+          <output class="man" data-for="j-taika"></output>
+          <span class="hint">補助金や住宅取得等資金の贈与の特例を受けた額は差し引きます。1年目の計算明細書に書いた額です。分からなければ空欄でも計算できます。</span></label>
+      </div>
+    </fieldset>
+  </form>
+
+  <section id="result" class="results" aria-live="polite" aria-label="書き方"></section>
+</main>
+
+<section id="glossary" class="wrap glossary" aria-labelledby="glossary-title">
+  <h2 id="glossary-title">ことばの解説</h2>
+  <p class="hint">画面の中で点線の下線がついている言葉は、押すとその場で解説が出ます。</p>
+  <dl id="glossary-list"></dl>
+</section>
+
+<footer class="wrap foot">
+  <p>このガイドは国税庁「令和8年分 年末調整のしかた」をもとに、申告書の書き方を一般的に案内するものです。最終的な判断は勤務先の担当者や税務署にご確認ください。12月より前に年末調整を受ける人（年の途中で退職する人など）は、改正前の金額で計算されます。国外に住む家族、住宅ローンの借換え・再取得の特例・特例居住用家屋（40㎡以上50㎡未満）の計算には対応していません。</p>
+  <p>出典：<a href="https://www.nta.go.jp/users/gensen/nencho/index/shikata.htm" target="_blank" rel="noopener">国税庁 令和8年分 年末調整のしかた</a></p>
+</footer>
+
+<template id="person-tpl">
+  <div class="person">
+    <div class="person-head">
+      <strong class="person-no"></strong>
+      <button type="button" class="btn tiny remove">削除</button>
+    </div>
+    <div class="row3">
+      <label class="field"><span class="q">名前（任意）</span><input type="text" data-p="name" maxlength="30"></label>
+      <label class="field"><span class="q">続柄</span>
+        <select data-p="rel">
+          <option>子</option><option>父</option><option>母</option><option>祖父</option><option>祖母</option>
+          <option>義父</option><option>義母</option><option>兄弟姉妹</option><option>孫</option><option>その他</option>
+        </select>
+      </label>
+      <label class="field"><span class="q">生年月日</span><input type="date" data-p="birth" min="1900-01-01" max="2026-12-31"></label>
+    </div>
+    <div class="row3">
+      <label class="field"><span class="q">今年の給与収入</span>
+        <span class="money"><input type="number" inputmode="numeric" min="0" step="1" data-p="salary"><span class="unit">円</span></span>
+        <output class="man"></output>
+      </label>
+      <label class="field"><span class="q">給与以外の所得金額</span>
+        <span class="money"><input type="number" inputmode="numeric" min="0" step="1" data-p="other"><span class="unit">円</span></span>
+        <output class="man"></output>
+      </label>
+      <label class="field"><span class="q">障害</span>
+        <select data-p="shogai">
+          <option value="none">当てはまらない</option>
+          <option value="normal">障害者</option>
+          <option value="special">特別障害者</option>
+        </select>
+      </label>
+    </div>
+    <label class="check"><input type="checkbox" data-p="together"><span>あなた（または配偶者）と一緒に住んでいる</span></label>
+  </div>
+</template>
+
+<div id="gloss-pop" class="gloss-pop" role="dialog" aria-modal="false" hidden></div>
+
+<script src="data/r8.js"></script>
+<script src="data/glossary.js"></script>
+<script src="js/calc.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
